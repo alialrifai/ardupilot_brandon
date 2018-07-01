@@ -192,6 +192,21 @@ void AP_Motors6DOF::output_min()
     hal.rcout->push();
 }
 
+
+//Give direct control of motors.
+void AP_Motors6DOF::direct_thruster_control(unsigned short* rc_pwm_input)
+{
+    int8_t i;
+    
+    hal.rcout->cork();
+    for (i=0; i<8; i++) {
+        if (motor_enabled[i]) {
+            rc_write(i, rc_pwm_input[i]);
+        }
+    }
+    hal.rcout->push();
+}
+
 int16_t AP_Motors6DOF::calc_thrust_to_pwm(float thrust_in) const
 {
     return constrain_int16(1500 + thrust_in * 400, _throttle_radio_min, _throttle_radio_max);
